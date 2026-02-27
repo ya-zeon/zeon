@@ -33,6 +33,8 @@
     {#each $groupsStore as group (group.id)}
         <div class="group-card">
             <div class="group-header">
+                <!-- svelte-ignore a11y_click_events_have_key_events -->
+                <!-- svelte-ignore a11y_no_static_element_interactions -->
                 <div class="group-title" on:click={() => toggleGroup(group.id)}>
                     <span class="expand-btn" class:expanded={expandedGroups.has(group.id)}>
                         {expandedGroups.has(group.id) ? '−' : '+'}

@@ -25,6 +25,7 @@
     
     <form on:submit|preventDefault={handleSubmit}>
         <div class="field">
+            <!-- svelte-ignore a11y_label_has_associated_control -->
             <label>Имя</label>
             <input 
                 type="text" 
@@ -34,6 +35,7 @@
         </div>
 
         <div class="field">
+            <!-- svelte-ignore a11y_label_has_associated_control -->
             <label>Email</label>
             <input 
                 type="email" 

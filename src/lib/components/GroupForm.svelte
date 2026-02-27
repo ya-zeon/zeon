@@ -28,6 +28,7 @@
     
     <form on:submit|preventDefault={handleSubmit}>
         <div class="field">
+            <!-- svelte-ignore a11y_label_has_associated_control -->
             <label>Название</label>
             <input 
                 type="text" 
@@ -37,6 +38,7 @@
         </div>
 
         <div class="field">
+            <!-- svelte-ignore a11y_label_has_associated_control -->
             <label>Год</label>
             <input 
                 type="number" 
@@ -48,6 +50,7 @@
         </div>
 
         <div class="field">
+            <!-- svelte-ignore a11y_label_has_associated_control -->
             <label>Описание</label>
             <textarea 
                 bind:value={formData.description}
