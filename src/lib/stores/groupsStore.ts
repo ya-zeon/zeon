@@ -12,8 +12,9 @@ const initialGroups: Group[] = [
         description: 'Прикладная информатика 3 курс',
         year: 2022,
         students: [
-            { id: 1, name: 'Иван Иванов', email: 'ivan@example.com', groupId: 1 },
-            { id: 2, name: 'Мария Петрова', email: 'maria@example.com', groupId: 1 }
+            { id: 1, name: 'Ежов Вадим', email: 'vadime338@gmail.com', groupId: 1 },
+            { id: 2, name: 'Жуков Антон', email: '@example.com', groupId: 1 },
+            { id: 3, name: 'Иван Иванов', email: 'ivan@example.com', groupId: 1 },
         ]
     },
     {
@@ -22,7 +23,7 @@ const initialGroups: Group[] = [
         description: 'Прикладная информатика 2 курс',
         year: 2023,
         students: [
-            { id: 3, name: 'Алексей Смирнов', email: 'alex@example.com', groupId: 2 }
+            { id: , name: 'Алексей Смирнов', email: 'alex@example.com', groupId: 2 }
         ]
     }
 ];

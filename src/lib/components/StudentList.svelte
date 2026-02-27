@@ -34,13 +34,16 @@
     }
 </script>
 
-<div class="students">
-    <h3>Студенты</h3>
+<div class="students-section">
+    <div class="section-header">
+        <h3>Студенты группы</h3>
+        <span class="count-badge">{group.students.length}</span>
+    </div>
     
     {#if group.students.length > 0}
-        <div class="list">
+        <div class="students-grid">
             {#each group.students as student (student.id)}
-                <div class="student">
+                <div class="student-card">
                     {#if editingStudent?.id === student.id}
                         <div class="edit-form">
                             <input 
@@ -56,17 +59,26 @@
                                 class="edit-input"
                             >
                             <div class="edit-actions">
-                                <button class="save-btn" on:click={saveEdit}>✓</button>
-                                <button class="cancel-btn" on:click={cancelEdit}>×</button>
+                                <button class="edit-btn save" on:click={saveEdit}>Сохранить</button>
+                                <button class="edit-btn cancel" on:click={cancelEdit}>Отмена</button>
                             </div>
                         </div>
                     {:else}
-                        <div class="info">
-                            <span class="name">{student.name}</span>
-                            <span class="email">{student.email}</span>
-                            <div class="actions">
-                                <button class="icon-btn" on:click={() => startEdit(student)}>✎</button>
-                                <button class="icon-btn" on:click={() => handleDeleteStudent(student.id)}>×</button>
+                        <div class="student-info">
+                            <div class="student-avatar">
+                                {student.name.charAt(0).toUpperCase()}
+                            </div>
+                            <div class="student-details">
+                                <span class="student-name">{student.name}</span>
+                                <span class="student-email">{student.email}</span>
+                            </div>
+                            <div class="student-actions">
+                                <button class="icon-btn" on:click={() => startEdit(student)}>
+                                    ✎
+                                </button>
+                                <button class="icon-btn delete" on:click={() => handleDeleteStudent(student.id)}>
+                                    ×
+                                </button>
                             </div>
                         </div>
                     {/if}
@@ -74,138 +86,206 @@
             {/each}
         </div>
     {:else}
-        <p class="empty">Нет студентов</p>
+        <div class="empty-students">
+            <p>В этой группе пока нет студентов</p>
+        </div>
     {/if}
 </div>
 
 <style>
-    .students {
-        margin-top: 1rem;
-        padding-top: 1rem;
-        border-top: 1px solid #e2e8f0;
+    .students-section {
+        margin-top: 1.5rem;
+        padding-top: 1.5rem;
+        border-top: 2px solid #e2e8f0;
     }
 
-    h3 {
-        font-size: 0.9rem;
-        font-weight: 500;
-        margin: 0 0 0.75rem 0;
-        color: #64748b;
-        text-transform: uppercase;
-        letter-spacing: 0.02em;
-    }
-
-    .list {
-        display: flex;
-        flex-direction: column;
-        gap: 0.5rem;
-    }
-
-    .student {
-        background: #f8fafc;
-        border-radius: 6px;
-        padding: 0.5rem;
-    }
-
-    .info {
+    .section-header {
         display: flex;
         align-items: center;
         gap: 0.75rem;
+        margin-bottom: 1.25rem;
     }
 
-    .name {
-        font-weight: 500;
-        color: #1e293b;
-        min-width: 120px;
-    }
-
-    .email {
-        color: #64748b;
-        font-size: 0.9rem;
-        flex: 1;
-    }
-
-    .actions {
-        display: flex;
-        gap: 0.25rem;
-    }
-
-    .icon-btn {
-        background: none;
-        border: none;
+    h3 {
         font-size: 1rem;
-        cursor: pointer;
-        color: #94a3b8;
-        width: 28px;
-        height: 28px;
+        font-weight: 600;
+        margin: 0;
+        color: #0f172a;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+    }
+
+    .count-badge {
+        padding: 0.2rem 0.6rem;
+        background: #3b82f6;
+        color: white;
+        border-radius: 20px;
+        font-size: 0.75rem;
+        font-weight: 600;
+    }
+
+    .students-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        gap: 0.75rem;
+    }
+
+    .student-card {
+        background: #f8fafc;
+        border: 1px solid #e2e8f0;
+        border-radius: 16px;
+        padding: 1rem;
+        transition: all 0.2s;
+    }
+
+    .student-card:hover {
+        background: white;
+        border-color: #3b82f6;
+        box-shadow: 0 4px 6px -1px rgba(59, 130, 246, 0.1);
+    }
+
+    .student-info {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+    }
+
+    .student-avatar {
+        width: 44px;
+        height: 44px;
+        background: linear-gradient(135deg, #3b82f6, #2563eb);
+        border-radius: 14px;
         display: flex;
         align-items: center;
         justify-content: center;
-        border-radius: 4px;
+        color: white;
+        font-weight: 700;
+        font-size: 1.2rem;
+        flex-shrink: 0;
+        box-shadow: 0 4px 6px -1px rgba(59, 130, 246, 0.3);
+    }
+
+    .student-details {
+        flex: 1;
+        min-width: 0;
+    }
+
+    .student-name {
+        font-weight: 600;
+        color: #0f172a;
+        font-size: 1rem;
+        display: block;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        margin-bottom: 0.2rem;
+    }
+
+    .student-email {
+        font-size: 0.875rem;
+        color: #64748b;
+        display: block;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .student-actions {
+        display: flex;
+        gap: 0.5rem;
+        flex-shrink: 0;
+    }
+
+    .icon-btn {
+        width: 36px;
+        height: 36px;
+        border: none;
+        background: white;
+        border-radius: 10px;
+        cursor: pointer;
+        color: #64748b;
+        font-size: 1.2rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.2s;
+        border: 1px solid #e2e8f0;
     }
 
     .icon-btn:hover {
-        background: #e2e8f0;
-        color: #475569;
+        background: #f1f5f9;
+        color: #3b82f6;
+        border-color: #3b82f6;
+        transform: translateY(-1px);
+    }
+
+    .icon-btn.delete:hover {
+        background: #fee2e2;
+        color: #b91c1c;
+        border-color: #fecaca;
     }
 
     .edit-form {
         display: flex;
-        gap: 0.5rem;
-        align-items: center;
+        flex-direction: column;
+        gap: 0.75rem;
     }
 
     .edit-input {
-        padding: 0.4rem 0.5rem;
-        border: 1px solid #e2e8f0;
-        border-radius: 4px;
-        font-size: 0.9rem;
-        flex: 1;
+        padding: 0.75rem;
+        border: 2px solid #e2e8f0;
+        border-radius: 12px;
+        font-size: 0.9375rem;
+        transition: all 0.2s;
     }
 
     .edit-input:focus {
         outline: none;
-        border-color: #0f172a;
+        border-color: #3b82f6;
+        box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
     }
 
     .edit-actions {
         display: flex;
-        gap: 0.25rem;
+        gap: 0.5rem;
     }
 
-    .save-btn, .cancel-btn {
-        width: 28px;
-        height: 28px;
+    .edit-btn {
+        flex: 1;
+        padding: 0.6rem;
         border: none;
-        border-radius: 4px;
+        border-radius: 10px;
+        font-size: 0.875rem;
+        font-weight: 600;
         cursor: pointer;
-        font-size: 1rem;
-        display: flex;
-        align-items: center;
-        justify-content: center;
+        transition: all 0.2s;
     }
 
-    .save-btn {
-        background: #0f172a;
+    .edit-btn.save {
+        background: #3b82f6;
         color: white;
     }
 
-    .save-btn:hover {
-        background: #1e293b;
+    .edit-btn.save:hover {
+        background: #2563eb;
     }
 
-    .cancel-btn {
-        background: #e2e8f0;
+    .edit-btn.cancel {
+        background: #f1f5f9;
         color: #475569;
     }
 
-    .cancel-btn:hover {
-        background: #cbd5e1;
+    .edit-btn.cancel:hover {
+        background: #e2e8f0;
     }
 
-    .empty {
+    .empty-students {
+        text-align: center;
+        padding: 2rem;
+        background: #f8fafc;
+        border-radius: 16px;
         color: #94a3b8;
         font-style: italic;
-        margin: 0.5rem 0;
-        font-size: 0.9rem;
+        border: 2px dashed #e2e8f0;
     }
 </style>

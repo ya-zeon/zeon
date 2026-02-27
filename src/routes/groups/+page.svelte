@@ -107,249 +107,293 @@
 
 <svelte:head>
     <title>Группы и студенты</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 </svelte:head>
 
 <main class="app">
-    <!-- Шапка -->
-    <header class="header">
-        <div class="header-top">
-            <h1>Группы и студенты</h1>
-            <div class="stats">
-                <span class="stat">Групп: {totalGroups}</span>
-                <span class="stat">Студентов: {totalStudents}</span>
+    <div class="container">
+        <!-- Шапка -->
+        <header class="header">
+            <div class="header-top">
+                <div>
+                    <h1>Группы и студенты</h1>
+                    <div class="stats">
+                        <div class="stat">
+                            <span class="stat-label">Группы</span>
+                            <span class="stat-value">{totalGroups}</span>
+                        </div>
+                        <div class="stat">
+                            <span class="stat-label">Студенты</span>
+                            <span class="stat-value">{totalStudents}</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="header-actions">
+                    <button class="btn btn-outline" on:click={openImportModal}>Импорт</button>
+                    <button class="btn btn-outline" on:click={openExportModal}>Экспорт</button>
+                    <button class="btn btn-outline" on:click={() => groupsStore.clearAll()}>Очистить</button>
+                    <button class="btn btn-outline" on:click={() => groupsStore.resetToInitial()}>Сброс</button>
+                    <button class="btn btn-primary" on:click={handleAddGroup}>+ Новая группа</button>
+                </div>
             </div>
-        </div>
 
-        <div class="header-actions">
-            <button class="button button-outline" on:click={openImportModal}>
-                Импорт
-            </button>
-            <button class="button button-outline" on:click={openExportModal}>
-                Экспорт
-            </button>
-            <button class="button button-outline" on:click={() => groupsStore.clearAll()}>
-                Очистить
-            </button>
-            <button class="button button-outline" on:click={() => groupsStore.resetToInitial()}>
-                Сброс
-            </button>
-            <button class="button button-primary" on:click={handleAddGroup}>
-                + Новая группа
-            </button>
-        </div>
+            <div class="save-banner">
+                <span class="save-dot"></span>
+                <span>Автоматическое сохранение</span>
+            </div>
+        </header>
 
-        <div class="save-hint">
-            <span class="hint-icon">💾</span>
-            <span>Все изменения сохраняются автоматически</span>
-        </div>
-    </header>
-
-    <!-- Список групп -->
-    <GroupList 
+        <!-- Список групп -->
+        <GroupList 
     onEditGroup={handleEditGroup}
     onAddStudent={handleAddStudent}
-/>
+        />
 
-    <!-- Модалка группы -->
-    {#if showGroupForm}
-        <div class="modal-overlay" on:click|self={closeModals}>
-            <div class="modal">
-                <button class="modal-close" on:click={closeModals}>×</button>
-                <GroupForm 
-                    group={selectedGroup}
-                    onClose={closeModals}
-                />
-            </div>
-        </div>
-    {/if}
-
-    <!-- Модалка студента -->
-    {#if showStudentForm && selectedGroupForStudent}
-        <div class="modal-overlay" on:click|self={closeModals}>
-            <div class="modal">
-                <button class="modal-close" on:click={closeModals}>×</button>
-                <StudentForm 
-                    group={selectedGroupForStudent}
-                    onClose={closeModals}
-                />
-            </div>
-        </div>
-    {/if}
-
-    <!-- Модалка экспорта -->
-    {#if showExportModal}
-        <div class="modal-overlay" on:click|self={closeModals}>
-            <div class="modal modal-lg">
-                <button class="modal-close" on:click={closeModals}>×</button>
-                <h2 class="modal-title">Экспорт данных</h2>
-                <div class="export-preview">
-                    <pre>{JSON.stringify($groupsStore, null, 2)}</pre>
-                </div>
-                <div class="modal-actions">
-                    <button class="button button-outline" on:click={closeModals}>Отмена</button>
-                    <button class="button button-primary" on:click={exportData}>Скачать</button>
+        <!-- Модальные окна -->
+        {#if showGroupForm}
+            <div class="modal-overlay" on:click|self={closeModals}>
+                <div class="modal">
+                    <button class="modal-close" on:click={closeModals}>×</button>
+                    <GroupForm 
+                        group={selectedGroup}
+                        onClose={closeModals}
+                    />
                 </div>
             </div>
-        </div>
-    {/if}
+        {/if}
 
-    <!-- Модалка импорта -->
-    {#if showImportModal}
-        <div class="modal-overlay" on:click|self={closeModals}>
-            <div class="modal">
-                <button class="modal-close" on:click={closeModals}>×</button>
-                <h2 class="modal-title">Импорт данных</h2>
-                
-                <div class="import-area">
-                    <div class="file-upload">
-                        <label class="button button-outline">
-                            Выбрать файл
-                            <input type="file" accept=".json" on:change={onFileSelect} hidden>
-                        </label>
-                        <span class="file-name">
-                            {importData ? 'Файл загружен' : 'Файл не выбран'}
-                        </span>
+        {#if showStudentForm && selectedGroupForStudent}
+            <div class="modal-overlay" on:click|self={closeModals}>
+                <div class="modal">
+                    <button class="modal-close" on:click={closeModals}>×</button>
+                    <StudentForm 
+                        group={selectedGroupForStudent}
+                        onClose={closeModals}
+                    />
+                </div>
+            </div>
+        {/if}
+
+        {#if showExportModal}
+            <div class="modal-overlay" on:click|self={closeModals}>
+                <div class="modal modal-lg">
+                    <button class="modal-close" on:click={closeModals}>×</button>
+                    <h2 class="modal-title">Экспорт данных</h2>
+                    <div class="export-preview">
+                        <pre>{JSON.stringify($groupsStore, null, 2)}</pre>
                     </div>
+                    <div class="modal-actions">
+                        <button class="btn btn-outline" on:click={closeModals}>Отмена</button>
+                        <button class="btn btn-primary" on:click={exportData}>Скачать</button>
+                    </div>
+                </div>
+            </div>
+        {/if}
 
-                    <div class="divider">или</div>
-
-                    <textarea 
-                        class="import-textarea" 
-                        placeholder="Вставьте JSON..."
-                        bind:value={importData}
-                        rows="6"
-                    ></textarea>
-
-                    {#if importError}
-                        <div class="error-message">
-                            {importError}
+        {#if showImportModal}
+            <div class="modal-overlay" on:click|self={closeModals}>
+                <div class="modal">
+                    <button class="modal-close" on:click={closeModals}>×</button>
+                    <h2 class="modal-title">Импорт данных</h2>
+                    
+                    <div class="import-area">
+                        <div class="file-upload">
+                            <label class="btn btn-outline">
+                                Выбрать файл
+                                <input type="file" accept=".json" on:change={onFileSelect} hidden>
+                            </label>
+                            <span class="file-name">
+                                {importData ? 'Файл загружен' : 'Файл не выбран'}
+                            </span>
                         </div>
-                    {/if}
 
-                    <div class="warning">
-                        <span class="warning-icon">⚠️</span>
-                        <span>Импорт заменит все текущие данные</span>
+                        <div class="divider">или</div>
+
+                        <textarea 
+                            class="import-textarea" 
+                            placeholder="Вставьте JSON..."
+                            bind:value={importData}
+                            rows="6"
+                        ></textarea>
+
+                        {#if importError}
+                            <div class="error-message">
+                                {importError}
+                            </div>
+                        {/if}
+
+                        <div class="warning">
+                            Импорт заменит все текущие данные
+                        </div>
+                    </div>
+
+                    <div class="modal-actions">
+                        <button class="btn btn-outline" on:click={closeModals}>Отмена</button>
+                        <button 
+                            class="btn btn-primary" 
+                            on:click={handleImport}
+                            disabled={!importData}
+                        >
+                            Импортировать
+                        </button>
                     </div>
                 </div>
-
-                <div class="modal-actions">
-                    <button class="button button-outline" on:click={closeModals}>Отмена</button>
-                    <button 
-                        class="button button-primary" 
-                        on:click={handleImport}
-                        disabled={!importData}
-                    >
-                        Импортировать
-                    </button>
-                </div>
             </div>
-        </div>
-    {/if}
+        {/if}
+    </div>
 </main>
 
 <style>
-    /* Базовые стили */
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
     .app {
+        font-family: 'Inter', sans-serif;
+        background: #f8fafc;
+        min-height: 100vh;
+        color: #0f172a;
+    }
+
+    .container {
         max-width: 1200px;
         margin: 0 auto;
-        padding: 2rem 1.5rem;
-        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-        color: #1e293b;
-        background: #ffffff;
+        padding: 2rem;
     }
 
     /* Шапка */
     .header {
-        margin-bottom: 2.5rem;
+        background: white;
+        border-radius: 24px;
+        padding: 1.5rem 2rem;
+        margin-bottom: 2rem;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+        border: 1px solid #e2e8f0;
     }
 
     .header-top {
         display: flex;
         justify-content: space-between;
-        align-items: baseline;
+        align-items: flex-start;
         margin-bottom: 1.5rem;
     }
 
     h1 {
-        font-size: 1.75rem;
-        font-weight: 500;
-        margin: 0;
-        color: #0f172a;
-        letter-spacing: -0.01em;
+        font-size: 2rem;
+        font-weight: 700;
+        margin-bottom: 1rem;
+        background: linear-gradient(135deg, #0f172a, #3b82f6);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
     }
 
     .stats {
         display: flex;
-        gap: 1rem;
+        gap: 2rem;
     }
 
     .stat {
-        font-size: 0.9rem;
+        display: flex;
+        flex-direction: column;
+        gap: 0.25rem;
+    }
+
+    .stat-label {
+        font-size: 0.875rem;
+        font-weight: 500;
         color: #64748b;
-        background: #f8fafc;
-        padding: 0.25rem 0.75rem;
-        border-radius: 20px;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+    }
+
+    .stat-value {
+        font-size: 2rem;
+        font-weight: 700;
+        color: #0f172a;
+        line-height: 1;
     }
 
     /* Кнопки */
     .header-actions {
         display: flex;
-        gap: 0.5rem;
-        margin-bottom: 1.25rem;
+        gap: 0.75rem;
         flex-wrap: wrap;
     }
 
-    .button {
-        padding: 0.6rem 1.2rem;
-        border: none;
-        border-radius: 6px;
-        font-size: 0.9rem;
-        font-weight: 400;
+    .btn {
+        padding: 0.75rem 1.5rem;
+        border-radius: 12px;
+        font-size: 0.9375rem;
+        font-weight: 600;
         cursor: pointer;
         transition: all 0.2s;
-        background: transparent;
+        border: none;
+        font-family: inherit;
     }
 
-    .button-outline {
-        background: transparent;
-        border: 1px solid #e2e8f0;
-        color: #475569;
-    }
-
-    .button-outline:hover {
-        background: #f8fafc;
-        border-color: #cbd5e1;
-    }
-
-    .button-primary {
-        background: #0f172a;
+    .btn-primary {
+        background: #3b82f6;
         color: white;
+        box-shadow: 0 4px 6px -1px rgba(59, 130, 246, 0.3);
     }
 
-    .button-primary:hover {
-        background: #1e293b;
+    .btn-primary:hover {
+        background: #2563eb;
+        transform: translateY(-2px);
+        box-shadow: 0 6px 10px -1px rgba(59, 130, 246, 0.4);
     }
 
-    .button:disabled {
+    .btn-outline {
+        background: white;
+        color: #1e293b;
+        border: 1px solid #e2e8f0;
+    }
+
+    .btn-outline:hover {
+        background: #f8fafc;
+        border-color: #94a3b8;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+    }
+
+    .btn:disabled {
         opacity: 0.5;
         cursor: not-allowed;
+        transform: none;
+        box-shadow: none;
     }
 
-    /* Подсказка о сохранении */
-    .save-hint {
-        display: flex;
+    /* Баннер сохранения */
+    .save-banner {
+        display: inline-flex;
         align-items: center;
-        gap: 0.5rem;
-        padding: 0.75rem 1rem;
-        background: #f8fafc;
-        border-radius: 8px;
-        font-size: 0.9rem;
-        color: #475569;
-        border: 1px solid #e2e8f0;
+        gap: 0.75rem;
+        padding: 0.5rem 1rem;
+        background: linear-gradient(135deg, #e0f2fe, #bae6fd);
+        border-radius: 100px;
+        font-size: 0.875rem;
+        font-weight: 500;
+        color: #0369a1;
+        border: 1px solid #7dd3fc;
     }
 
-    .hint-icon {
-        font-size: 1.1rem;
+    .save-dot {
+        width: 8px;
+        height: 8px;
+        background: #0284c7;
+        border-radius: 50%;
+        animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+        0%, 100% { opacity: 1; }
+        50% { opacity: 0.3; }
     }
 
     /* Модальные окна */
@@ -359,55 +403,76 @@
         left: 0;
         right: 0;
         bottom: 0;
-        background: rgba(0, 0, 0, 0.5);
+        background: rgba(15, 23, 42, 0.6);
+        backdrop-filter: blur(4px);
         display: flex;
         align-items: center;
         justify-content: center;
         z-index: 1000;
-        backdrop-filter: blur(2px);
+        animation: fadeIn 0.2s;
     }
 
     .modal {
         background: white;
-        border-radius: 12px;
-        padding: 1.5rem;
+        border-radius: 32px;
+        padding: 2.5rem;
         width: 90%;
-        max-width: 500px;
+        max-width: 550px;
         max-height: 90vh;
         overflow-y: auto;
         position: relative;
-        box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+        box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+        animation: slideUp 0.3s;
+        border: 1px solid #e2e8f0;
     }
 
     .modal-lg {
-        max-width: 700px;
+        max-width: 750px;
+    }
+
+    @keyframes fadeIn {
+        from { opacity: 0; }
+        to { opacity: 1; }
+    }
+
+    @keyframes slideUp {
+        from {
+            opacity: 0;
+            transform: translateY(30px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
     }
 
     .modal-close {
         position: absolute;
-        top: 1rem;
-        right: 1rem;
-        background: none;
-        border: none;
+        top: 1.5rem;
+        right: 1.5rem;
+        background: white;
+        border: 1px solid #e2e8f0;
         font-size: 1.5rem;
         cursor: pointer;
-        color: #94a3b8;
-        width: 32px;
-        height: 32px;
+        color: #64748b;
+        width: 40px;
+        height: 40px;
         display: flex;
         align-items: center;
         justify-content: center;
-        border-radius: 6px;
+        border-radius: 12px;
+        transition: all 0.2s;
     }
 
     .modal-close:hover {
         background: #f1f5f9;
-        color: #475569;
+        color: #0f172a;
+        transform: rotate(90deg);
     }
 
     .modal-title {
-        font-size: 1.25rem;
-        font-weight: 500;
+        font-size: 1.5rem;
+        font-weight: 700;
         margin: 0 0 1.5rem 0;
         color: #0f172a;
     }
@@ -415,50 +480,52 @@
     .modal-actions {
         display: flex;
         justify-content: flex-end;
-        gap: 0.75rem;
-        margin-top: 1.5rem;
+        gap: 1rem;
+        margin-top: 2rem;
     }
 
     /* Экспорт/Импорт */
     .export-preview {
-        background: #f8fafc;
+        background: #f1f5f9;
         border: 1px solid #e2e8f0;
-        border-radius: 8px;
-        padding: 1rem;
+        border-radius: 16px;
+        padding: 1.5rem;
         max-height: 300px;
         overflow: auto;
-        margin: 1rem 0;
+        margin: 1.5rem 0;
     }
 
     .export-preview pre {
         margin: 0;
-        font-size: 0.85rem;
-        color: #334155;
+        font-size: 0.875rem;
+        color: #1e293b;
         font-family: 'Monaco', 'Menlo', monospace;
     }
 
     .import-area {
-        margin: 1rem 0;
+        margin: 1.5rem 0;
     }
 
     .file-upload {
         display: flex;
         align-items: center;
         gap: 1rem;
-        margin-bottom: 1rem;
+        margin-bottom: 1.5rem;
     }
 
     .file-name {
         color: #64748b;
-        font-size: 0.9rem;
+        font-size: 0.9375rem;
+        font-weight: 500;
     }
 
     .divider {
         text-align: center;
         color: #94a3b8;
-        margin: 1rem 0;
+        margin: 1.5rem 0;
         position: relative;
-        font-size: 0.9rem;
+        font-size: 0.9375rem;
+        font-weight: 500;
     }
 
     .divider::before,
@@ -476,68 +543,85 @@
 
     .import-textarea {
         width: 100%;
-        padding: 0.75rem;
-        border: 1px solid #e2e8f0;
-        border-radius: 6px;
+        padding: 1rem;
+        border: 2px solid #e2e8f0;
+        border-radius: 16px;
         font-family: 'Monaco', 'Menlo', monospace;
-        font-size: 0.9rem;
+        font-size: 0.9375rem;
         resize: vertical;
-        margin-bottom: 1rem;
-        box-sizing: border-box;
+        margin-bottom: 1.5rem;
+        transition: all 0.2s;
     }
 
     .import-textarea:focus {
         outline: none;
-        border-color: #0f172a;
+        border-color: #3b82f6;
+        box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1);
     }
 
     .error-message {
         color: #b91c1c;
-        font-size: 0.9rem;
-        margin-bottom: 1rem;
-        padding: 0.5rem;
-        background: #fef2f2;
-        border-radius: 6px;
+        font-size: 0.9375rem;
+        margin-bottom: 1.5rem;
+        padding: 1rem;
+        background: #fee2e2;
+        border-radius: 12px;
+        border: 1px solid #fecaca;
+        font-weight: 500;
     }
 
     .warning {
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-        padding: 0.75rem;
+        padding: 1rem;
         background: #fffbeb;
-        border: 1px solid #fef3c7;
-        border-radius: 6px;
-        font-size: 0.9rem;
-        color: #92400e;
-    }
-
-    .warning-icon {
-        font-size: 1rem;
+        border: 1px solid #fde68a;
+        border-radius: 12px;
+        font-size: 0.9375rem;
+        font-weight: 500;
+        color: #b45309;
     }
 
     /* Адаптивность */
-    @media (max-width: 640px) {
-        .app {
+    @media (max-width: 768px) {
+        .container {
             padding: 1rem;
+        }
+
+        .header {
+            padding: 1.5rem;
         }
 
         .header-top {
             flex-direction: column;
-            gap: 0.5rem;
+            gap: 1.5rem;
         }
 
         .header-actions {
-            flex-direction: column;
+            width: 100%;
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
         }
 
-        .header-actions .button {
+        .header-actions .btn {
             width: 100%;
             text-align: center;
+            padding: 0.75rem;
+        }
+
+        .stats {
+            gap: 1.5rem;
+        }
+
+        .stat-value {
+            font-size: 1.5rem;
         }
 
         .modal {
-            padding: 1rem;
+            padding: 1.5rem;
+        }
+
+        .modal-close {
+            top: 1rem;
+            right: 1rem;
         }
     }
 </style>

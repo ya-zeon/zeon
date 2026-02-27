@@ -19,9 +19,9 @@
     }
 </script>
 
-<div class="form">
+<div>
     <h2>Новый студент</h2>
-    <p class="group-name">{group.name}</p>
+    <p class="group-name">Группа: {group.name}</p>
     
     <form on:submit|preventDefault={handleSubmit}>
         <div class="field">
@@ -29,7 +29,6 @@
             <input 
                 type="text" 
                 bind:value={formData.name}
-                placeholder="Имя студента"
                 required
             >
         </div>
@@ -39,16 +38,15 @@
             <input 
                 type="email" 
                 bind:value={formData.email}
-                placeholder="student@example.com"
                 required
             >
         </div>
 
         <div class="actions">
-            <button type="button" class="button button-outline" on:click={onClose}>
+            <button type="button" class="btn" on:click={onClose}>
                 Отмена
             </button>
-            <button type="submit" class="button button-primary">
+            <button type="submit" class="btn primary">
                 Добавить
             </button>
         </div>
@@ -56,20 +54,14 @@
 </div>
 
 <style>
-    .form {
-        width: 100%;
-    }
-
     h2 {
         font-size: 1.2rem;
         font-weight: 500;
         margin: 0 0 0.25rem 0;
-        color: #0f172a;
     }
 
     .group-name {
-        color: #64748b;
-        font-size: 0.9rem;
+        color: #666;
         margin: 0 0 1.5rem 0;
     }
 
@@ -81,54 +73,42 @@
         display: block;
         margin-bottom: 0.25rem;
         font-size: 0.9rem;
-        color: #475569;
+        color: #666;
     }
 
     input {
         width: 100%;
         padding: 0.5rem;
-        border: 1px solid #e2e8f0;
-        border-radius: 4px;
+        border: 1px solid #ccc;
         font-size: 0.95rem;
-        box-sizing: border-box;
-    }
-
-    input:focus {
-        outline: none;
-        border-color: #0f172a;
     }
 
     .actions {
         display: flex;
         justify-content: flex-end;
-        gap: 0.5rem;
+        gap: 0.75rem;
         margin-top: 1.5rem;
     }
 
-    .button {
+    .btn {
         padding: 0.5rem 1rem;
-        border: none;
-        border-radius: 4px;
-        cursor: pointer;
+        border: 1px solid #ccc;
+        background: white;
         font-size: 0.9rem;
+        cursor: pointer;
     }
 
-    .button-primary {
-        background: #0f172a;
+    .btn.primary {
+        background: #0066cc;
+        border-color: #0066cc;
         color: white;
     }
 
-    .button-primary:hover {
-        background: #1e293b;
+    .btn.primary:hover {
+        background: #0052a3;
     }
 
-    .button-outline {
-        background: transparent;
-        border: 1px solid #e2e8f0;
-        color: #475569;
-    }
-
-    .button-outline:hover {
-        background: #f8fafc;
+    .btn:hover {
+        background: #f0f0f0;
     }
 </style>

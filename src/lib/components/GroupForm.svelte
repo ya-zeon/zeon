@@ -23,8 +23,8 @@
     }
 </script>
 
-<div class="form">
-    <h2>{group ? 'Редактировать' : 'Новая группа'}</h2>
+<div>
+    <h2>{group ? 'Редактировать группу' : 'Новая группа'}</h2>
     
     <form on:submit|preventDefault={handleSubmit}>
         <div class="field">
@@ -32,7 +32,6 @@
             <input 
                 type="text" 
                 bind:value={formData.name}
-                placeholder="Например: CS-2024"
                 required
             >
         </div>
@@ -52,16 +51,15 @@
             <label>Описание</label>
             <textarea 
                 bind:value={formData.description}
-                placeholder="Описание группы..."
-                rows="2"
+                rows="3"
             ></textarea>
         </div>
 
         <div class="actions">
-            <button type="button" class="button button-outline" on:click={onClose}>
+            <button type="button" class="btn" on:click={onClose}>
                 Отмена
             </button>
-            <button type="submit" class="button button-primary">
+            <button type="submit" class="btn primary">
                 {group ? 'Сохранить' : 'Создать'}
             </button>
         </div>
@@ -69,15 +67,10 @@
 </div>
 
 <style>
-    .form {
-        width: 100%;
-    }
-
     h2 {
         font-size: 1.2rem;
         font-weight: 500;
         margin: 0 0 1.5rem 0;
-        color: #0f172a;
     }
 
     .field {
@@ -88,54 +81,42 @@
         display: block;
         margin-bottom: 0.25rem;
         font-size: 0.9rem;
-        color: #475569;
+        color: #666;
     }
 
     input, textarea {
         width: 100%;
         padding: 0.5rem;
-        border: 1px solid #e2e8f0;
-        border-radius: 4px;
+        border: 1px solid #ccc;
         font-size: 0.95rem;
-        box-sizing: border-box;
-    }
-
-    input:focus, textarea:focus {
-        outline: none;
-        border-color: #0f172a;
     }
 
     .actions {
         display: flex;
         justify-content: flex-end;
-        gap: 0.5rem;
+        gap: 0.75rem;
         margin-top: 1.5rem;
     }
 
-    .button {
+    .btn {
         padding: 0.5rem 1rem;
-        border: none;
-        border-radius: 4px;
-        cursor: pointer;
+        border: 1px solid #ccc;
+        background: white;
         font-size: 0.9rem;
+        cursor: pointer;
     }
 
-    .button-primary {
-        background: #0f172a;
+    .btn.primary {
+        background: #0066cc;
+        border-color: #0066cc;
         color: white;
     }
 
-    .button-primary:hover {
-        background: #1e293b;
+    .btn.primary:hover {
+        background: #0052a3;
     }
 
-    .button-outline {
-        background: transparent;
-        border: 1px solid #e2e8f0;
-        color: #475569;
-    }
-
-    .button-outline:hover {
-        background: #f8fafc;
+    .btn:hover {
+        background: #f0f0f0;
     }
 </style>
