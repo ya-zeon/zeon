@@ -27,7 +27,6 @@
 		background-color: #fafafa;
 		color: #2c3e50;
 		line-height: 1.6;
-		min-height: 100vh;
 	}
 
 	/* Навигация */
@@ -43,6 +42,7 @@
 		z-index: 10;
 		backdrop-filter: blur(5px);
 		background-color: rgba(255, 255, 255, 0.9);
+		width: 100%;
 	}
 
 	.nav-link {
@@ -81,8 +81,9 @@
 	/* Контентная область */
 	.content {
 		max-width: 800px;
-		margin: 3rem auto;
-		padding: 0 1.5rem;
+		margin: 0 auto;
+		padding: 3rem 1.5rem;
+		min-height: calc(100vh - 73px);
 	}
 
 	/* Стили для заголовков внутри контента */

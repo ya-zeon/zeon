@@ -14,7 +14,7 @@
 	<div class="gradient-bg"></div>
 	
 	<div class="center">
-		<p class="epic-text" class:visible={isVisible}>
+		<p class="text" class:visible={isVisible}>
 			Home
 		</p>
 	</div>
@@ -45,18 +45,12 @@
 		left: 0;
 		right: 0;
 		bottom: 0;
-		background: linear-gradient(135deg, 
-			#0a0a0a,
-			#1a1a2e,
-			#16213e,
-			#1a1a2e,
-			#0a0a0a
-		);
+		background: linear-gradient(145deg, #0a0f1c, #0f1a2b, #1a2a3f, #0f1a2b, #0a0f1c);
 		background-size: 300% 300%;
-		animation: gradientMove 12s ease infinite;
+		animation: gradientShift 15s ease infinite;
 	}
 
-	@keyframes gradientMove {
+	@keyframes gradientShift {
 		0% { background-position: 0% 50%; }
 		50% { background-position: 100% 50%; }
 		100% { background-position: 0% 50%; }
@@ -73,28 +67,16 @@
 		padding: 2rem;
 	}
 
-	.epic-text {
+	.text {
 		font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
 		font-size: clamp(3rem, 20vw, 15rem);
-		font-weight: 800;
-		letter-spacing: 0.02em;
-		text-transform: uppercase;
-		color: transparent;
-		background: linear-gradient(135deg, 
-			#ffffff,
-			#f0f0f0,
-			#e0e0e0,
-			#f0f0f0,
-			#ffffff
-		);
-		background-size: 200% 200%;
-		-webkit-background-clip: text;
-		background-clip: text;
+		font-weight: 700;
+		color: #e0e7ff;
+		text-shadow: 0 4px 8px rgba(0, 0, 0, 0.5), 0 0 20px rgba(100, 150, 255, 0.3);
 		
 		opacity: 0;
-		transform: scale(0.7) translateY(30px);
-		filter: blur(15px);
-		transition: all 1.2s cubic-bezier(0.2, 0.9, 0.3, 1.1);
+		transform: scale(0.9) translateY(10px);
+		transition: all 0.7s cubic-bezier(0.2, 0.9, 0.3, 1.1);
 		
 		text-align: center;
 		line-height: 1.1;
@@ -102,19 +84,8 @@
 		word-break: break-word;
 	}
 
-	.epic-text.visible {
+	.text.visible {
 		opacity: 1;
 		transform: scale(1) translateY(0);
-		filter: blur(0);
-		animation: softGlow 3s ease-in-out infinite;
-	}
-
-	@keyframes softGlow {
-		0%, 100% {
-			text-shadow: 0 0 30px rgba(255, 255, 255, 0.2);
-		}
-		50% {
-			text-shadow: 0 0 50px rgba(255, 255, 255, 0.4);
-		}
 	}
 </style>
