@@ -47,8 +47,8 @@
         autofocus
       />
       <div class="edit-actions">
-        <button class="save-btn" on:click={saveEdit}>✓</button>
-        <button class="cancel-btn" on:click={cancelEdit}>✕</button>
+        <button class="save-btn" on:click={saveEdit} title="Сохранить">✓</button>
+        <button class="cancel-btn" on:click={cancelEdit} title="Отмена">✕</button>
       </div>
     </div>
   {:else}
@@ -62,20 +62,26 @@
         <span class="checkmark"></span>
       </label>
       
-      <!-- svelte-ignore a11y_no_static_element_interactions -->
-      <span 
-        class="todo-text"
-        on:dblclick={startEdit}
-      >
+      <span class="todo-text">
         {todo.text}
       </span>
       
-      <button 
-        class="delete-btn"
-        on:click={() => onDelete(todo.id)}
-      >
-        Удалить
-      </button>
+      <div class="actions">
+        <button 
+          class="edit-btn"
+          on:click={startEdit}
+          title="Редактировать"
+        >
+          ✎
+        </button>
+        <button 
+          class="delete-btn"
+          on:click={() => onDelete(todo.id)}
+          title="Удалить"
+        >
+          🗑
+        </button>
+      </div>
     </div>
   {/if}
 </li>
@@ -171,33 +177,58 @@
     flex: 1;
     font-size: 16px;
     color: #1e293b;
-    cursor: pointer;
     padding: 4px 0;
     line-height: 1.5;
     font-weight: 450;
   }
 
-  .todo-text:hover {
-    color: #4361ee;
-  }
-
-  .delete-btn {
-    padding: 6px 14px;
-    background: white;
-    border: 1px solid #e2e8f0;
-    border-radius: 20px;
-    color: #64748b;
-    font-size: 13px;
-    font-weight: 500;
-    cursor: pointer;
-    transition: all 0.15s ease;
+  .actions {
+    display: flex;
+    gap: 8px;
+    opacity: 0.5;
+    transition: opacity 0.2s ease;
     flex-shrink: 0;
   }
 
-  .delete-btn:hover {
-    background: #fef2f2;
-    border-color: #f87171;
+  .todo-item:hover .actions {
+    opacity: 1;
+  }
+
+  .edit-btn, .delete-btn {
+    width: 36px;
+    height: 36px;
+    border: none;
+    border-radius: 8px;
+    font-size: 18px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.15s ease;
+    background: white;
+    border: 1px solid #e2e8f0;
+  }
+
+  .edit-btn {
+    color: #4361ee;
+  }
+
+  .edit-btn:hover {
+    background: #4361ee;
+    color: white;
+    border-color: #4361ee;
+    transform: scale(1.05);
+  }
+
+  .delete-btn {
     color: #dc2626;
+  }
+
+  .delete-btn:hover {
+    background: #dc2626;
+    color: white;
+    border-color: #dc2626;
+    transform: scale(1.05);
   }
 
   .edit-form {
@@ -256,5 +287,26 @@
   .cancel-btn:hover {
     background: #e2e8f0;
     color: #334155;
+  }
+
+  @media (max-width: 640px) {
+    .todo-content {
+      padding: 12px 14px;
+      gap: 10px;
+    }
+
+    .todo-text {
+      font-size: 14px;
+    }
+
+    .actions {
+      opacity: 1;
+    }
+
+    .edit-btn, .delete-btn {
+      width: 40px;
+      height: 40px;
+      font-size: 20px;
+    }
   }
 </style>

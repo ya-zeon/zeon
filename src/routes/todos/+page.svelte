@@ -9,7 +9,7 @@
   
   let todos: Todo[] = [
     { id: 1, text: 'Первая задача', completed: false },
-    { id: 2, text: 'Вторая задача', completed: false }
+    { id: 2, text: 'Вторая задача', completed: false },
   ];
   let newTodo: string = '';
 
