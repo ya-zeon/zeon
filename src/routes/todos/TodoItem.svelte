@@ -1,312 +1,190 @@
 <script lang="ts">
-  export let todo: {
-    id: number;
-    text: string;
-    completed: boolean;
-  };
-  
-  export let onToggle: (id: number) => void;
-  export let onDelete: (id: number) => void;
-  export let onSave: (id: number, text: string) => void;
+	import { fly, slide } from 'svelte/transition';
+	import { enhance } from '$app/forms';
+	
+	// Используем $props() для получения пропсов в Svelte 5
+	let { todo }: {
+		todo: {
+			id: number;
+			description: string;
+			completed: boolean;
+		}
+	} = $props();
 
-  let editing = false;
-  let editedText = todo.text;
+	// Состояния
+	let editing = $state(false);
+let editedText = $state(todo.description);
 
-  function startEdit() {
-    editing = true;
-    editedText = todo.text;
-  }
+	function startEdit() {
+		editing = true;
+		editedText = todo.description;
+	}
 
-  function saveEdit() {
-    if (editedText.trim()) {
-      onSave(todo.id, editedText);
-      editing = false;
-    }
-  }
+	function cancelEdit() {
+		editing = false;
+		editedText = todo.description;
+	}
 
-  function cancelEdit() {
-    editing = false;
-    editedText = todo.text;
-  }
-
-  function handleKeydown(e: KeyboardEvent) {
-    if (e.key === 'Enter') saveEdit();
-    if (e.key === 'Escape') cancelEdit();
-  }
+	function handleKeydown(e: KeyboardEvent) {
+		if (e.key === 'Escape') cancelEdit();
+	}
 </script>
 
-<li class="todo-item {todo.completed ? 'completed' : ''}">
-  {#if editing}
-    <div class="edit-form">
-      <!-- svelte-ignore a11y_autofocus -->
-      <input
-        type="text"
-        bind:value={editedText}
-        on:keydown={handleKeydown}
-        on:blur={saveEdit}
-        autofocus
-      />
-      <div class="edit-actions">
-        <button class="save-btn" on:click={saveEdit} title="Сохранить">✓</button>
-        <button class="cancel-btn" on:click={cancelEdit} title="Отмена">✕</button>
-      </div>
-    </div>
-  {:else}
-    <div class="todo-content">
-      <label class="checkbox">
-        <input
-          type="checkbox"
-          checked={todo.completed}
-          on:change={() => onToggle(todo.id)}
-        />
-        <span class="checkmark"></span>
-      </label>
-      
-      <span class="todo-text">
-        {todo.text}
-      </span>
-      
-      <div class="actions">
-        <button 
-          class="edit-btn"
-          on:click={startEdit}
-          title="Редактировать"
-        >
-          ✎
-        </button>
-        <button 
-          class="delete-btn"
-          on:click={() => onDelete(todo.id)}
-          title="Удалить"
-        >
-          🗑
-        </button>
-      </div>
-    </div>
-  {/if}
+<li in:fly={{ y: 20 }} out:slide>
+	{#if editing}
+		<form 
+			method="POST" 
+			action="?/update" 
+			use:enhance={() => {
+				return async ({ result }) => {
+					if (result.type === 'success') {
+						editing = false;
+					}
+				};
+			}}
+			class="edit-form"
+		>
+			<input type="hidden" name="id" value={todo.id} />
+			<!-- svelte-ignore event_directive_deprecated -->
+			<!-- svelte-ignore a11y_autofocus -->
+			<!-- svelte-ignore event_directive_deprecated -->
+			<input
+				type="text"
+				name="description"
+				value={editedText}
+				on:keydown={handleKeydown}
+				on:blur={(e) => {
+					// Если поле не пустое и не равно исходному, отправляем форму
+					if (e.currentTarget.value.trim() && e.currentTarget.value !== todo.description) {
+						e.currentTarget.form?.requestSubmit();
+					} else {
+						cancelEdit();
+					}
+				}}
+				autofocus
+				required
+			/>
+			<!-- svelte-ignore event_directive_deprecated -->
+			<button type="button" on:click={cancelEdit} class="cancel-edit">✕</button>
+		</form>
+	{:else}
+		<!-- svelte-ignore a11y_no_static_element_interactions -->
+		<form method="POST" action="?/toggle" use:enhance>
+			<input type="hidden" name="id" value={todo.id} />
+			<!-- svelte-ignore event_directive_deprecated -->
+			<input 
+				type="checkbox" 
+				name="completed" 
+				checked={todo.completed}
+				on:change={(e) => e.currentTarget.form?.requestSubmit()}
+				aria-label="Mark as complete"
+			/>
+			<!-- svelte-ignore a11y_no_static_element_interactions -->
+			<!-- svelte-ignore event_directive_deprecated -->
+			<span class="todo-text {todo.completed ? 'completed' : ''}" on:dblclick={startEdit}>
+				{todo.description}
+			</span>
+			<!-- svelte-ignore event_directive_deprecated -->
+			<!-- svelte-ignore a11y_consider_explicit_label -->
+			<button 
+				type="button"
+				on:click={startEdit}
+				class="edit-btn"
+			></button>
+			<!-- svelte-ignore a11y_consider_explicit_label -->
+			<button 
+				type="submit"
+				formaction="?/delete"
+				class="delete-btn"
+			></button>
+		</form>
+	{/if}
 </li>
 
 <style>
-  .todo-item {
-    background: white;
-    border-radius: 12px;
-    margin-bottom: 8px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
-    border: 1px solid #eaeef2;
-    transition: all 0.2s ease;
-  }
+	li {
+		list-style: none;
+	}
 
-  .todo-item:hover {
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-    border-color: #cdd9e6;
-  }
+	form {
+		display: flex;
+		align-items: center;
+		gap: 0.75rem;
+		padding: 0.75rem 0;
+		border-bottom: 1px solid #f0f0f0;
+	}
 
-  .todo-item.completed {
-    background: #f8fafc;
-    opacity: 0.8;
-  }
+	input[type="checkbox"] {
+		width: 1.2rem;
+		height: 1.2rem;
+		cursor: pointer;
+		accent-color: #666;
+	}
 
-  .todo-item.completed .todo-text {
-    text-decoration: line-through;
-    color: #8b9eb0;
-  }
+	.todo-text {
+		flex: 1;
+		font-size: 1.1rem;
+		color: #333;
+		cursor: text;
+	}
 
-  .todo-content {
-    display: flex;
-    align-items: center;
-    padding: 14px 18px;
-    gap: 14px;
-  }
+	.todo-text.completed {
+		text-decoration: line-through;
+		color: #ccc;
+	}
 
-  .checkbox {
-    position: relative;
-    width: 22px;
-    height: 22px;
-    cursor: pointer;
-    flex-shrink: 0;
-  }
+	.edit-btn, .delete-btn, .cancel-edit {
+		border: none;
+		background: transparent;
+		cursor: pointer;
+		width: 2rem;
+		height: 2rem;
+		opacity: 0.5;
+		transition: opacity 0.2s;
+		padding: 0;
+		background-size: 1.2rem 1.2rem;
+		background-repeat: no-repeat;
+		background-position: 50% 50%;
+		font-size: 0;
+	}
 
-  .checkbox input {
-    position: absolute;
-    opacity: 0;
-    cursor: pointer;
-    height: 0;
-    width: 0;
-  }
+	.edit-btn {
+		background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23666' stroke-width='2'%3E%3Cpath d='M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z'%3E%3C/path%3E%3C/svg%3E");
+	}
 
-  .checkmark {
-    position: absolute;
-    top: 0;
-    left: 0;
-    height: 22px;
-    width: 22px;
-    background-color: white;
-    border: 2px solid #cbd5e0;
-    border-radius: 6px;
-    transition: all 0.15s ease;
-  }
+	.delete-btn {
+		background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23666' stroke-width='2'%3E%3Cpath d='M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2'%3E%3C/path%3E%3C/svg%3E");
+	}
 
-  .checkbox:hover .checkmark {
-    border-color: #4361ee;
-    background-color: #f0f4ff;
-  }
+	.cancel-edit {
+		background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23666' stroke-width='2'%3E%3Cpath d='M18 6L6 18M6 6l12 12'%3E%3C/path%3E%3C/svg%3E");
+	}
 
-  .checkbox input:checked ~ .checkmark {
-    background-color: #4361ee;
-    border-color: #4361ee;
-  }
+	.edit-btn:hover, .delete-btn:hover, .cancel-edit:hover {
+		opacity: 1;
+	}
 
-  .checkmark:after {
-    content: "";
-    position: absolute;
-    display: none;
-    left: 7px;
-    top: 3px;
-    width: 5px;
-    height: 10px;
-    border: solid white;
-    border-width: 0 2px 2px 0;
-    transform: rotate(45deg);
-  }
+	.edit-form {
+		display: flex;
+		gap: 0.5rem;
+	}
 
-  .checkbox input:checked ~ .checkmark:after {
-    display: block;
-  }
+	.edit-form input {
+		flex: 1;
+		padding: 0.5rem;
+		font-size: 1.1rem;
+		border: 2px solid #666;
+		border-radius: 4px;
+		font-family: inherit;
+	}
 
-  .todo-text {
-    flex: 1;
-    font-size: 16px;
-    color: #1e293b;
-    padding: 4px 0;
-    line-height: 1.5;
-    font-weight: 450;
-  }
+	.edit-form input:focus {
+		outline: none;
+	}
 
-  .actions {
-    display: flex;
-    gap: 8px;
-    opacity: 0.5;
-    transition: opacity 0.2s ease;
-    flex-shrink: 0;
-  }
-
-  .todo-item:hover .actions {
-    opacity: 1;
-  }
-
-  .edit-btn, .delete-btn {
-    width: 36px;
-    height: 36px;
-    border: none;
-    border-radius: 8px;
-    font-size: 18px;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: all 0.15s ease;
-    background: white;
-    border: 1px solid #e2e8f0;
-  }
-
-  .edit-btn {
-    color: #4361ee;
-  }
-
-  .edit-btn:hover {
-    background: #4361ee;
-    color: white;
-    border-color: #4361ee;
-    transform: scale(1.05);
-  }
-
-  .delete-btn {
-    color: #dc2626;
-  }
-
-  .delete-btn:hover {
-    background: #dc2626;
-    color: white;
-    border-color: #dc2626;
-    transform: scale(1.05);
-  }
-
-  .edit-form {
-    display: flex;
-    align-items: center;
-    padding: 10px 14px;
-    gap: 10px;
-    background: white;
-  }
-
-  .edit-form input {
-    flex: 1;
-    padding: 10px 14px;
-    border: 2px solid #4361ee;
-    border-radius: 8px;
-    font-size: 15px;
-    outline: none;
-    background: white;
-  }
-
-  .edit-actions {
-    display: flex;
-    gap: 6px;
-    flex-shrink: 0;
-  }
-
-  .save-btn, .cancel-btn {
-    width: 40px;
-    height: 40px;
-    border: none;
-    border-radius: 8px;
-    font-size: 18px;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: all 0.15s ease;
-  }
-
-  .save-btn {
-    background: #4361ee;
-    color: white;
-  }
-
-  .save-btn:hover {
-    background: #3046c7;
-    transform: scale(1.02);
-  }
-
-  .cancel-btn {
-    background: #f1f5f9;
-    color: #64748b;
-    border: 1px solid #e2e8f0;
-  }
-
-  .cancel-btn:hover {
-    background: #e2e8f0;
-    color: #334155;
-  }
-
-  @media (max-width: 640px) {
-    .todo-content {
-      padding: 12px 14px;
-      gap: 10px;
-    }
-
-    .todo-text {
-      font-size: 14px;
-    }
-
-    .actions {
-      opacity: 1;
-    }
-
-    .edit-btn, .delete-btn {
-      width: 40px;
-      height: 40px;
-      font-size: 20px;
-    }
-  }
+	@media (max-width: 640px) {
+		.edit-btn, .delete-btn {
+			opacity: 1;
+		}
+	}
 </style>

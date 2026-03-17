@@ -18,3 +18,11 @@ export interface Group {
 
 export type NewStudent = Omit<Student, 'id'>;
 export type NewGroup = Omit<Group, 'id' | 'students'>;
+
+export interface Todo {
+  id: number;
+  description: string;
+  completed: boolean;
+  createdAt: string;
+  updatedAt: string;
+}

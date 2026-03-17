@@ -14,11 +14,11 @@
 </main>
 
 <style>
-	/* Сброс отступов и базовые настройки */
-	* {
+	/* Сброс отступов у html и body */
+	:global(html), :global(body) {
 		margin: 0;
 		padding: 0;
-		box-sizing: border-box;
+		width: 100%;
 	}
 
 	/* Основные стили для body */
@@ -27,6 +27,7 @@
 		background-color: #fafafa;
 		color: #2c3e50;
 		line-height: 1.6;
+		min-height: 100vh;
 	}
 
 	/* Навигация */
